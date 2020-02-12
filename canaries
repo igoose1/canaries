@@ -43,15 +43,15 @@ import os
 import sys
 import logging
 from glob import glob
-from typing import Tuple, List, Dict
+from typing import List, Dict
 import jinja2
 from docopt import docopt
 
 
-__version__ = '1.1.3'
+__version__ = '1.2.0'
 __all__ = [
     'main',
-    'grab_message_with_signature',
+    'grab_messages_with_signatures',
     'join_messages'
 ]
 
@@ -60,27 +60,39 @@ _handler = logging.StreamHandler()
 _handler.setLevel(logging.INFO)
 logger.addHandler(_handler)
 
-def grab_message_with_signature(folder: str) -> Dict[str, str]:
-    ''' searches for '*.sig' and its message in `folder` directory '''
-    signatures = glob(os.path.join(folder, '*.sig'))
-    if len(signatures) > 1:
-        logger.error(f'There are more than one signature in `{folder}`.')
-        sys.exit(2)
-    elif not signatures:
-        logger.error(f'There is no signatures in `{folder}". Expected one.')
-        sys.exit(2)
-    signature_file = signatures[0]
-    message_file = signature_file[: -len('.sig')]
-    if not os.path.isfile(message_file):
-        logger.error(f'`{message_file}` doesn\'t exist or it\'s not a file.')
+
+def grab_messages_with_signatures(folder: str) -> List[Dict[str, str]]:
+    ''' searches for '*.sig' signs and its messages in `folder` directory '''
+    signatures = sorted(
+        glob(os.path.join(folder, '*.sig')),
+        key=os.path.getctime,
+        reverse=True
+    )
+
+    if not signatures:
+        logger.error(f'There is no signatures in `{folder}".')
         sys.exit(2)
 
-    with open(signature_file, 'r') as file:
-        signature = file.read()
-    with open(message_file, 'r') as file:
-        message = file.read()
+    messages_with_signatures = list()
+    for signature_file in signatures:
+        message_file = signature_file[: -len('.sig')]
+        if not os.path.isfile(message_file):
+            logger.error(
+                f'`{message_file}` doesn\'t exist or it\'s not a file.'
+            )
+            sys.exit(2)
 
-    return dict(name=folder, message=message, signature=signature)
+        with open(signature_file, 'r') as file:
+            signature = file.read()
+        with open(message_file, 'r') as file:
+            message = file.read()
+        name = message_file
+        logger.info(f"Grabbed `{name}` message")
+
+        messages_with_signatures.append(
+            dict(name=name, message=message, signature=signature)
+        )
+    return messages_with_signatures
 
 
 def join_messages(signed_messages: List[Dict[str, str]]) -> str:
@@ -100,8 +112,7 @@ def main() -> None:
         if not os.path.isdir(folder):
             logger.error(f'`{folder}` doesn\'t exist or it\'s not a folder.')
             sys.exit(1)
-        signed_messages.append(grab_message_with_signature(folder))
-        logger.info(f'Grabbed message from `{folder}`.')
+        signed_messages.extend(grab_messages_with_signatures(folder))
 
     main_page = join_messages(signed_messages)
     with open('canaries.html', 'w') as file:

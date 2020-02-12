@@ -4,15 +4,20 @@
 </head>
 <body>
 
-<h1>Canaries</h1>
+	<h1>Canaries</h1>
 
 {% for msg in signed_messages %}
-	<div style="padding-left: 1em">
 	<h2>{{ msg.name }}</h2>
-	<h5>Message</h5>
-	<pre style="padding-left: 2em">{{ msg.message|e }}</pre>
-	<h5>Signature</h5>
-	<pre style="padding-left: 2em">{{ msg.signature|e }}</pre>
+	<div style="padding-left: 1em">
+		<div>
+			<h5>Message</h5>
+			<pre style="padding-left: 2em">{{ msg.message|e }}</pre>
+		</div>
+		<div>
+			<h5>Signature</h5>
+			<pre style="padding-left: 2em">{{ msg.signature|e }}</pre>
+		</div>
+	</div>
 {% endfor %}
 
 </body>
