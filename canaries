@@ -61,6 +61,7 @@ _handler.setLevel(logging.INFO)
 logger.addHandler(_handler)
 
 def grab_message_with_signature(folder: str) -> Dict[str, str]:
+    ''' searches for '*.sig' and its message in `folder` directory '''
     signatures = glob(os.path.join(folder, '*.sig'))
     if len(signatures) > 1:
         logger.error(f'There are more than one signature in `{folder}`.')
@@ -83,12 +84,14 @@ def grab_message_with_signature(folder: str) -> Dict[str, str]:
 
 
 def join_messages(signed_messages: List[Dict[str, str]]) -> str:
+    ''' renders `signed_messages` by jinja2 template system '''
     with open('template.html', 'r') as file:
         template = jinja2.Template(file.read())
     return template.render(signed_messages=signed_messages)
 
 
 def main() -> None:
+    ''' parses args and does all magic '''
     args: Dict[str, str] = docopt(__doc__, version=__version__)
 
     logger.setLevel(logging.ERROR if args['-q'] else logging.INFO)
