@@ -48,7 +48,7 @@ import jinja2
 from docopt import docopt
 
 
-__version__ = '1.0.0'
+__version__ = '1.1.2'
 __all__ = [
     'main',
     'grab_message_with_signature',
