@@ -26,6 +26,17 @@ Options:
     -q              Quiet mode.
     -h --help       Show this screen.
     --verion        Show version.
+
+Exit status:
+    0 - success.
+    1 - invalid message path.
+    2 - invalid files in path.
+
+Examples:
+    Generate a new html file of messages in msg/ directory:
+        canaries -q msg
+    Look at result in your web-browser:
+        elinks canaries.html
 '''
 
 import os
