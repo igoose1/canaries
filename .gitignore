@@ -10,3 +10,10 @@ dmypy.json
 
 # folder of messages
 msg/
+
+# output html
+canaries.html
+
+# virtual env
+.env/
+.venv/

@@ -1,0 +1,18 @@
+<html>
+<head>
+	<title>Canaries</title>
+</head>
+<body>
+
+{% for msg in signed_messages %}
+	<div>
+	<h2>{{ msg.name }}</h2>
+	<h4>Message:</h3>
+	<pre>{{ msg.message|e }}</pre>
+	<h4>Signature:</h3>
+	<pre>{{ msg.signature|e }}</pre>
+{% endfor %}
+
+</body>
+</html>
+
