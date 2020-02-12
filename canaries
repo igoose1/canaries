@@ -48,7 +48,7 @@ import jinja2
 from docopt import docopt
 
 
-__version__ = '1.1.2'
+__version__ = '1.1.3'
 __all__ = [
     'main',
     'grab_message_with_signature',
@@ -106,7 +106,7 @@ def main() -> None:
     main_page = join_messages(signed_messages)
     with open('canaries.html', 'w') as file:
         file.write(main_page)
-    logger.info('Write html to `canaries.html`.')
+    logger.info('Wrote html to `canaries.html`.')
 
 
 if __name__ == '__main__':
